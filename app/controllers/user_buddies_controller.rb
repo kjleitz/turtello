@@ -1,4 +1,6 @@
 class UserBuddiesController < ApplicationController
+  before_action :require_auth!
+
   # GET /user_buddies
   def index
     user_buddies = UserBuddy.all

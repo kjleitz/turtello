@@ -1,4 +1,6 @@
 class MessagesController < ApplicationController
+  before_action :require_auth!
+
   # GET /messages
   def index
     messages = Message.all

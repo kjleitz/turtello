@@ -1,4 +1,6 @@
 class UsersController < ApplicationController
+  before_action :require_auth!, except: [:create]
+
   # GET /users
   def index
     users = User.all
@@ -16,12 +18,10 @@ class UsersController < ApplicationController
     user = User.new(user_create_params)
 
     if user.save
-      session[:refresh_expires_at] = 30.days.from_now.to_i
-      token = JwtToken.encode({ user_id: user.id })
-      response.set_header('Authorization', "Bearer #{token}")
+      set_current_user!(user)
       render json: user, status: :created, location: user
     else
-      render json: user.errors, status: :unprocessable_entity
+      render_validation_failure(user)
     end
   end
 

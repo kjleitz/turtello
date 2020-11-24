@@ -14,7 +14,7 @@ class JwtToken
       }
 
       secret = Rails.application.secrets.secret_key_base
-      JWT.encode(claims, secret, payload[:alg])
+      JWT.encode(claims, secret, claims[:alg])
     end
 
     def decode(token)
