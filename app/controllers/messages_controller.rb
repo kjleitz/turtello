@@ -22,7 +22,8 @@ class MessagesController < ApplicationController
     end
   end
 
-  # PATCH/PUT /messages/1
+  # PATCH /messages/1
+  # PUT /messages/1
   def update
     message = Message.find(params[:id])
 
