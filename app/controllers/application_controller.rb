@@ -1,13 +1,17 @@
 class ApplicationController < ActionController::API
   include ActionController::Cookies
+  include Pundit
 
   rescue_from ActiveRecord::RecordNotFound, with: :render_404
+  rescue_from Pundit::NotAuthorizedError, with: :render_403
 
   ERROR_CODES = {
     validation_failure: "Model failed validation.",
     not_found: "Resource not found.",
     auth_token_invalid: "Auth token is expired, invalid, or missing. A valid token must be included in the headers of the request, like 'Authorization: Bearer <token>'. A new token may be obtained via re-authentication or the token refresh endpoint.",
-    refresh_token_invalid: "Refresh token is expired, invalid, or missing. A new token must be obtained via re-authentication."
+    refresh_token_invalid: "Refresh token is expired, invalid, or missing. A new token must be obtained via re-authentication.",
+    credentials_invalid: "Invalid username/password combination",
+    forbidden: "Insufficient permissions to perform this action",
   }.freeze
 
   def set_current_user!(user)
@@ -25,23 +29,16 @@ class ApplicationController < ActionController::API
   end
 
   def refresh_current_user!
-    user = User.find_by(id: user_id_for_refresh) if can_refresh?
+    return unless can_refresh?
 
-    if user.present?
-      set_current_user!(user)
-      user
-    else
-      unset_current_user!
-      nil
-    end
+    user = User.find_by(id: user_id_for_refresh)
+    set_current_user!(user) if user.present?
+    user
   end
 
   def current_user
     return @current_user if defined?(@current_user)
-
-    user = User.find_by(id: user_id_from_auth_token) if user_id_from_auth_token.present?
-    unset_current_user! if user.blank?
-    @current_user = user
+    @current_user = User.find_by(id: user_id_from_auth_token)
   end
 
   def logged_in?
@@ -58,13 +55,8 @@ class ApplicationController < ActionController::API
 
   def log_in_user!(username:, password:)
     user = User.find_by(username: username)&.authenticate(password)
-    if user.present?
-      set_current_user!(user)
-      user
-    else
-      unset_current_user!
-      nil
-    end
+    set_current_user!(user) if user.present?
+    user
   end
 
   def log_out_user!
@@ -99,6 +91,10 @@ class ApplicationController < ActionController::API
     render status: :not_found, json: json_error(:not_found)
   end
 
+  def render_403
+    render status: :forbidden, json: json_error(:forbidden)
+  end
+
   def require_auth!
     unless authenticated?
       render status: :unauthorized, json: json_error(:auth_token_invalid)
@@ -108,7 +104,8 @@ class ApplicationController < ActionController::API
   private
 
   def refresh_expires_at
-    refresh_expires_at, user_id = session.values_at(:refresh_expires_at, :user_id)
+    refresh_expires_at = session[:refresh_expires_at]
+    user_id = session[:user_id]
     if refresh_expires_at.present? && user_id.present?
       Time.zone.at(refresh_expires_at)
     else

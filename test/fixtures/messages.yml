@@ -1,11 +1,43 @@
 # Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
-one:
-  sender: one
-  receiver: one
-  body: MyText
+thread_1_message_1:
+  sender: bob
+  receiver: david
+  body: knock knock
+  arrives_at: <%= Time.zone.now %>
 
-two:
-  sender: two
-  receiver: two
-  body: MyText
+thread_1_message_2:
+  sender: david
+  receiver: bob
+  body: who's there?
+  arrives_at: <%= Time.zone.now %>
+
+thread_1_message_3:
+  sender: bob
+  receiver: david
+  body: i dunno lol
+  arrives_at: <%= Time.zone.now %>
+
+thread_2_message_1:
+  sender: keegan
+  receiver: bob
+  body: know any good knock knock jokes?
+  arrives_at: <%= Time.zone.now %>
+
+thread_2_message_2:
+  sender: bob
+  receiver: keegan
+  body: i thought so but after my last attempt i'm not so sure anymore
+  arrives_at: <%= Time.zone.now %>
+
+thread_3_message_1:
+  sender: keegan
+  receiver: david
+  body: are you okay after that horrible joke bob told you?
+  arrives_at: <%= Time.zone.now %>
+
+thread_3_message_2:
+  sender: david
+  receiver: keegan
+  body: i'm in the hospital now so no
+  arrives_at: <%= Time.zone.now %>

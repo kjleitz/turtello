@@ -1,4 +1,6 @@
 class User < ApplicationRecord
+  extend FriendlyId
+
   has_secure_password
 
   has_many :sent_messages,
@@ -35,7 +37,18 @@ class User < ApplicationRecord
     source: :user,
     class_name: "User"
 
-  validates :username, presence: true, uniqueness: true
+  validates :username,
+    presence: true,
+    uniqueness: true,
+    format: { with: /\A[a-zA-Z0-9_-]+\z/, message: "must only include letters, numbers, underscores, and/or hyphens" }
+
+  friendly_id :username, use: :slugged
+
+  enum role: {
+    peasant: 0,
+    admin: 1,
+    moderator: 2,
+  }
 
   def generate_token
     secret = Rails.application.secrets.secret_key_base

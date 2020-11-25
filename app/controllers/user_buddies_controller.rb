@@ -1,47 +1,40 @@
 class UserBuddiesController < ApplicationController
   before_action :require_auth!
 
-  # GET /user_buddies
   def index
-    user_buddies = UserBuddy.all
-    render json: user_buddies
+    user_buddies = policy_scope UserBuddy.all
+    render json: UserBuddySerializer.new(user_buddies).as_json
   end
 
-  # GET /user_buddies/1
   def show
-    user_buddy = UserBuddy.find(params[:id])
-    render json: user_buddy
+    user_buddy = authorize UserBuddy.find(params[:id])
+    render json: UserBuddySerializer.new(user_buddy).as_json
   end
 
-  # POST /user_buddies
   def create
-    render status: :unauthorized and return unless user_buddy_params[:user_id] == current_user.id
-
-    user_buddy = UserBuddy.new(user_buddy_params)
+    user_buddy = authorize UserBuddy.new(user_buddy_params)
 
     if user_buddy.save
-      render json: user_buddy, status: :created, location: user_buddy
+      render status: :created, json: UserBuddySerializer.new(user_buddy).as_json
     else
-      render json: user_buddy.errors, status: :unprocessable_entity
+      render_validation_failure(user_buddy)
     end
   end
 
-  # PATCH /user_buddies/1
-  # PUT /user_buddies/1
   def update
-    user_buddy = UserBuddy.find(params[:id])
+    user_buddy = authorize UserBuddy.find(params[:id])
 
     if user_buddy.update(user_buddy_params)
-      render json: user_buddy
+      render json: UserBuddySerializer.new(user_buddy).as_json
     else
-      render json: user_buddy.errors, status: :unprocessable_entity
+      render_validation_failure(user_buddy)
     end
   end
 
-  # DELETE /user_buddies/1
   def destroy
-    user_buddy = UserBuddy.find(params[:id])
+    user_buddy = authorize UserBuddy.find(params[:id])
     user_buddy.destroy
+    render status: :no_content
   end
 
   private

@@ -11,3 +11,12 @@ class ActiveSupport::TestCase
 
   # Add more helper methods to be used by all tests here...
 end
+
+class ActionDispatch::IntegrationTest
+  def log_in_as(user, password = 'password', &block)
+    post sign_in_url, params: { user: { username: user.username, password: password } }
+    assert_response :success
+    @auth_headers = { Authorization: response.headers['Authorization'] }
+    yield @auth_headers if block_given?
+  end
+end

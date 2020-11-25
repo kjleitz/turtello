@@ -1,47 +1,45 @@
 class UsersController < ApplicationController
   before_action :require_auth!, except: [:create]
 
-  # GET /users
   def index
-    users = User.all
-    render json: users
+    users = policy_scope User.all
+    render json: UserSerializer.new(users).as_json
   end
 
-  # GET /users/1
   def show
-    user = User.find(params[:id])
-    render json: @user
+    user = authorize User.friendly.find(params[:id])
+    render json: UserSerializer.new(user).as_json
   end
 
-  # POST /users
   def create
-    user = User.new(user_create_params)
+    user = authorize User.new(user_create_params)
 
     if user.save
       set_current_user!(user)
-      render json: user, status: :created, location: user
+      render status: :created, json: UserSerializer.new(user).as_json
     else
       render_validation_failure(user)
     end
   end
 
-  # PATCH /users/1
-  # PUT /users/1
   def update
-    user = User.find(params[:id])
-    render status: :unauthorized and return unless user.authenticate(current_password)
+    user = authorize User.friendly.find(params[:id])
+
+    if new_password.present? && !user.authenticate(current_password)
+      render status: :unauthorized, json: json_error(:credentials_invalid) and return
+    end
 
     if user.update(user_update_params)
-      render json: user
+      render json: UserSerializer.new(user).as_json
     else
-      render json: user.errors, status: :unprocessable_entity
+      render_validation_failure(user)
     end
   end
 
-  # DELETE /users/1
   def destroy
-    user = User.find(params[:id])
+    user = authorize User.friendly.find(params[:id])
     user.destroy
+    render status: :no_content
   end
 
   private
@@ -59,12 +57,15 @@ class UsersController < ApplicationController
   end
 
   def user_update_params
-    new_password = user_params[:new_password]
-    base_params = user_params.except(:new_password)
+    base_params = user_params.except(:password, :new_password)
     new_password.present? ? base_params.merge(password: new_password) : base_params
   end
 
   def current_password
     user_params[:password]
+  end
+
+  def new_password
+    user_params[:new_password]
   end
 end

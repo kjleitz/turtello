@@ -1,45 +1,40 @@
 class MessagesController < ApplicationController
   before_action :require_auth!
 
-  # GET /messages
   def index
-    messages = Message.all
-    render json: messages
+    messages = policy_scope Message.all
+    render json: MessageSerializer.new(messages).as_json
   end
 
-  # GET /messages/1
   def show
-    message = Message.find(params[:id])
-    render json: message
+    message = authorize Message.find(params[:id])
+    render json: MessageSerializer.new(message).as_json
   end
 
-  # POST /messages
   def create
-    message = Message.new(message_params)
+    message = authorize Message.new(message_params)
 
     if message.save
-      render json: message, status: :created, location: message
+      render status: :created, json: MessageSerializer.new(message).as_json
     else
-      render json: message.errors, status: :unprocessable_entity
+      render_validation_failure(message)
     end
   end
 
-  # PATCH /messages/1
-  # PUT /messages/1
   def update
-    message = Message.find(params[:id])
+    message = authorize Message.find(params[:id])
 
     if message.update(message_params)
-      render json: message
+      render json: MessageSerializer.new(message).as_json
     else
-      render json: message.errors, status: :unprocessable_entity
+      render_validation_failure(message)
     end
   end
 
-  # DELETE /messages/1
   def destroy
-    message = Message.find(params[:id])
+    message = authorize Message.find(params[:id])
     message.destroy
+    render status: :no_content
   end
 
   private

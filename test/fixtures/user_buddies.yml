@@ -1,9 +1,21 @@
 # Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
-one:
-  user: one
-  buddy: one
+bob_david:
+  user: bob
+  buddy: david
 
-two:
-  user: two
-  buddy: two
+bob_keegan:
+  user: bob
+  buddy: keegan
+
+david_bob:
+  user: david
+  buddy: bob
+
+keegan_bob:
+  user: keegan
+  buddy: bob
+
+keegan_david:
+  user: keegan
+  buddy: david
