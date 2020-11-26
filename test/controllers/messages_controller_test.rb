@@ -21,7 +21,7 @@ class MessagesControllerTest < ActionDispatch::IntegrationTest
       get messages_url, headers: auth_headers
       assert_response :success
       data = JSON.parse(response.body)['data']
-      assert_equal(data.count, Message.count)
+      assert_not_equal(data.count, Message.count)
     end
   end
 

@@ -1,11 +1,12 @@
 class UserBuddyPolicy < ApplicationPolicy
   class Scope < ApplicationPolicy::Scope
     def resolve
-      case user.role
-      when 'admin' then scope.all
-      when 'moderator' then scope.all
-      else scope.where('"user_buddies"."user_id" = :user_id OR "user_buddies"."buddy_id" = :user_id', { user_id: user.id })
-      end
+      # case user.role
+      # when 'admin' then scope.all
+      # when 'moderator' then scope.all
+      # else scope.where('"user_buddies"."user_id" = :user_id OR "user_buddies"."buddy_id" = :user_id', { user_id: user.id })
+      # end
+      scope.where('"user_buddies"."user_id" = :user_id OR "user_buddies"."buddy_id" = :user_id', { user_id: user.id })
     end
   end
 

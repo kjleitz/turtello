@@ -50,6 +50,11 @@ class User < ApplicationRecord
     moderator: 2,
   }
 
+  def messages_with(buddy)
+    condition = '(user_id = :user_id OR buddy_id = :user_id) AND (user_id = :buddy_id OR buddy_id = :buddy_id)'
+    Message.arrived.where(condition, { user_id: id, buddy_id: buddy.id }).order(arrived_at: :asc)
+  end
+
   def generate_token
     secret = Rails.application.secrets.secret_key_base
     JWT.encode({ user_id: id }, secret, 'HS256')
