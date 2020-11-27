@@ -1,12 +1,7 @@
 class MessagePolicy < ApplicationPolicy
   class Scope < ApplicationPolicy::Scope
     def resolve
-      # case user.role
-      # when 'admin' then scope.all
-      # when 'moderator' then scope.all
-      # else scope.where('"messages"."sender_id" = :user_id OR "messages"."receiver_id" = :user_id', { user_id: user.id })
-      # end
-      scope.where('"messages"."sender_id" = :user_id OR "messages"."receiver_id" = :user_id', { user_id: user.id })
+      scope.involving(user)
     end
   end
 
@@ -16,7 +11,7 @@ class MessagePolicy < ApplicationPolicy
 
   def show?
     return false unless logged_in?
-    user.admin? || user.id == record.sender_id || user.id == record.receiver_id
+    user.admin? || record.involves?(user)
   end
 
   def create?

@@ -40,7 +40,10 @@ class User < ApplicationRecord
   validates :username,
     presence: true,
     uniqueness: true,
-    format: { with: /\A[a-zA-Z0-9_-]+\z/, message: "must only include letters, numbers, underscores, and/or hyphens" }
+    format: {
+      with: /\A[a-zA-Z0-9_-]+\z/,
+      message: "must only include letters, numbers, underscores, and/or hyphens"
+    }
 
   friendly_id :username, use: :slugged
 
@@ -51,8 +54,28 @@ class User < ApplicationRecord
   }
 
   def messages_with(buddy)
-    condition = '(user_id = :user_id OR buddy_id = :user_id) AND (user_id = :buddy_id OR buddy_id = :buddy_id)'
-    Message.arrived.where(condition, { user_id: id, buddy_id: buddy.id }).order(arrived_at: :asc)
+    condition = <<~SQL
+      ("messages"."sender_id" = :id AND "messages"."receiver_id" = :buddy_id)
+      OR ("messages"."sender_id" = :buddy_id AND "messages"."receiver_id" = :id)
+    SQL
+    bindings = { id: id, buddy_id: buddy.id }
+    Message.arrived.where(condition, bindings)
+  end
+
+  def message_thread_ids
+    MessageThread.involving(self).ids
+  end
+
+  def message_threads
+    MessageThread.involving(self)
+  end
+
+  def thread_ids
+    message_thread_ids
+  end
+
+  def threads
+    message_threads
   end
 
   def generate_token

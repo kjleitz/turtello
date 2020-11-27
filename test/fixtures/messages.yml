@@ -3,41 +3,48 @@
 thread_1_message_1:
   sender: bob
   receiver: david
+  message_thread: thread_1
   body: knock knock
   arrives_at: <%= Time.zone.now %>
 
 thread_1_message_2:
   sender: david
   receiver: bob
+  message_thread: thread_1
   body: who's there?
   arrives_at: <%= Time.zone.now %>
 
 thread_1_message_3:
   sender: bob
   receiver: david
+  message_thread: thread_1
   body: i dunno lol
   arrives_at: <%= Time.zone.now %>
 
 thread_2_message_1:
   sender: keegan
   receiver: bob
+  message_thread: thread_2
   body: know any good knock knock jokes?
   arrives_at: <%= Time.zone.now %>
 
 thread_2_message_2:
   sender: bob
   receiver: keegan
+  message_thread: thread_2
   body: i thought so but after my last attempt i'm not so sure anymore
   arrives_at: <%= Time.zone.now %>
 
 thread_3_message_1:
   sender: keegan
   receiver: david
+  message_thread: thread_3
   body: are you okay after that horrible joke bob told you?
   arrives_at: <%= Time.zone.now %>
 
 thread_3_message_2:
   sender: david
   receiver: keegan
+  message_thread: thread_3
   body: i'm in the hospital now so no
   arrives_at: <%= Time.zone.now %>

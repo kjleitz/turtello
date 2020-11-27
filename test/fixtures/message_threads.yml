@@ -1,0 +1,8 @@
+thread_1:
+  slug: <%= [ActiveRecord::FixtureSet.identify(:bob), ActiveRecord::FixtureSet.identify(:david)].sort.join('-') %>
+
+thread_2:
+  slug: <%= [ActiveRecord::FixtureSet.identify(:bob), ActiveRecord::FixtureSet.identify(:keegan)].sort.join('-') %>
+
+thread_3:
+  slug: <%= [ActiveRecord::FixtureSet.identify(:david), ActiveRecord::FixtureSet.identify(:keegan)].sort.join('-') %>

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_11_25_231404) do
+ActiveRecord::Schema.define(version: 2020_11_27_180449) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -26,6 +26,13 @@ ActiveRecord::Schema.define(version: 2020_11_25_231404) do
     t.index ["sluggable_type", "sluggable_id"], name: "index_friendly_id_slugs_on_sluggable_type_and_sluggable_id"
   end
 
+  create_table "message_threads", force: :cascade do |t|
+    t.string "slug", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["slug"], name: "index_message_threads_on_slug", unique: true
+  end
+
   create_table "messages", force: :cascade do |t|
     t.bigint "sender_id", null: false
     t.bigint "receiver_id", null: false
@@ -33,7 +40,9 @@ ActiveRecord::Schema.define(version: 2020_11_25_231404) do
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.datetime "arrives_at", precision: 6, null: false
+    t.bigint "message_thread_id", null: false
     t.index ["arrives_at"], name: "index_messages_on_arrives_at"
+    t.index ["message_thread_id"], name: "index_messages_on_message_thread_id"
     t.index ["receiver_id"], name: "index_messages_on_receiver_id"
     t.index ["sender_id"], name: "index_messages_on_sender_id"
   end
@@ -59,4 +68,5 @@ ActiveRecord::Schema.define(version: 2020_11_25_231404) do
     t.index ["username"], name: "index_users_on_username"
   end
 
+  add_foreign_key "messages", "message_threads"
 end
