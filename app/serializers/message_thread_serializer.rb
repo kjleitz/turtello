@@ -3,6 +3,11 @@ class MessageThreadSerializer
 
   set_key_transform :camel_lower
 
+  link(:self) do |message_thread|
+    user, buddy = message_thread.participants
+    "/users/#{user.id || 0}/message_threads/#{buddy.id || 0}"
+  end
+
   attributes(*%i[
     slug
     created_at

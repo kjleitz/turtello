@@ -3,6 +3,8 @@ class UserSerializer
 
   set_key_transform :camel_lower
 
+  link(:self) { |user| "/users/#{user.id || 0}" }
+
   attributes(*%i[
     username
     role
@@ -11,4 +13,5 @@ class UserSerializer
   ])
 
   has_many :user_buddies, serializer: UserBuddySerializer
+  has_many :buddies, serializer: UserSerializer
 end

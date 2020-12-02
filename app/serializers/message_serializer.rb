@@ -3,6 +3,8 @@ class MessageSerializer
 
   set_key_transform :camel_lower
 
+  link(:self) { |message| "/messages/#{message.id || 0}" }
+
   attributes(*%i[
     sender_id
     receiver_id

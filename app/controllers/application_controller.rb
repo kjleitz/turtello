@@ -77,7 +77,7 @@ class ApplicationController < ActionController::API
       error: {
         code: error_code,
         description: ERROR_CODES[error_code],
-        messages: error_messages.presence || ["Something went wrong"]
+        messages: error_messages
       }
     }
   end
