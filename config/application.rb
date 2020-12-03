@@ -36,5 +36,10 @@ module Turtello
 
     config.middleware.use ActionDispatch::Cookies
     config.middleware.use ActionDispatch::Session::CookieStore
+
+    config.action_controller.session_store :cookie_store,
+      key: "_session_turtello_#{Rails.env}",
+      same_site: :none,
+      secure: true
   end
 end

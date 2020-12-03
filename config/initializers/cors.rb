@@ -5,15 +5,20 @@
 
 # Read more: https://github.com/cyu/rack-cors
 
-if Rails.env.production?
-  Rails.application.config.middleware.insert_before 0, Rack::Cors do
-    allow do
-      origins 'www.turtello.com', 'api.turtello.com'
+CORS_ORIGINS = if Rails.env.production?
+  ['www.turtello.com', 'api.turtello.com']
+else
+  ['localhost:8080', '127.0.0.1:8080', 'localhost:3000', '127.0.0.1:3000']
+end
 
-      resource '*',
-        headers: :any,
-        credentials: true,
-        methods: [:get, :post, :put, :patch, :delete, :options, :head]
-    end
+
+Rails.application.config.middleware.insert_before 0, Rack::Cors do
+  allow do
+    origins(*CORS_ORIGINS)
+
+    resource '*',
+      headers: :any,
+      credentials: true,
+      methods: [:get, :post, :put, :patch, :delete, :options, :head]
   end
 end
