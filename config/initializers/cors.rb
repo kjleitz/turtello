@@ -19,6 +19,7 @@ Rails.application.config.middleware.insert_before 0, Rack::Cors do
     resource '*',
       headers: :any,
       credentials: true,
-      methods: [:get, :post, :put, :patch, :delete, :options, :head]
+      methods: [:get, :post, :put, :patch, :delete, :options, :head],
+      expose: ['Authorization', 'X-CSRF-Token', 'Content-Length', 'Content-Range']
   end
 end
