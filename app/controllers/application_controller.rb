@@ -37,8 +37,7 @@ class ApplicationController < ActionController::API
   end
 
   def current_user
-    return @current_user if defined?(@current_user)
-    @current_user = User.find_by(id: user_id_from_auth_token)
+    @current_user ||= User.find_by(id: user_id_from_auth_token)
   end
 
   def logged_in?
@@ -97,7 +96,10 @@ class ApplicationController < ActionController::API
 
   def require_auth!
     unless authenticated?
-      Rails.logger.info("#require_auth! failed. Authorization header: #{request.headers['Authorization']}")
+      auth_header = request.headers['Authorization'].presence || ''
+      auth_token = auth_header.gsub(/\Abearer +/i, '').strip
+      auth_claims2 = JwtToken.decode(auth_token) || {}
+      Rails.logger.info("#require_auth! failed. Auth claims: #{auth_claims} Auth claims 2: #{auth_claims2} User id: #{user_id_from_auth_token}")
       render status: :unauthorized, json: json_error(:auth_token_invalid)
     end
   end
