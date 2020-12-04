@@ -7,7 +7,7 @@ class JwtToken
       claims = {
         exp: expires_at.is_a?(Time) ? expires_at.to_i : expires_at,
         iat: Time.zone.now.to_i,
-        iss: 'https://www.turtello.com',
+        iss: 'https://api.turtello.com',
         alg: 'HS256',
         typ: 'JWT',
         **data_hash
