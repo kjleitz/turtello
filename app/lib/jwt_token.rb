@@ -23,7 +23,10 @@ class JwtToken
       decoded = begin
         secret = Rails.application.secrets.secret_key_base
         JWT.decode(token, secret, true, { algorithm: 'HS256' })
-      rescue JWT::DecodeError
+      rescue JWT::DecodeError => e
+        Rails.logger.info("JWT error:")
+        Rails.logger.info(e.inspect)
+        Rails.logger.info(e.backtrace)
         []
       end
 
