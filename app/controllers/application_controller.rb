@@ -110,6 +110,7 @@ class ApplicationController < ActionController::API
         true,
         { algorithm: 'HS256' }
       )
+
       Rails.logger.info("#require_auth! failed.\nAuth token: #{auth_token}\nClaims: #{claims}\nClaims validated: #{claims_validated}")
       render status: :unauthorized, json: json_error(:auth_token_invalid)
     end
