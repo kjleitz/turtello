@@ -79,7 +79,7 @@ class User < ApplicationRecord
   end
 
   def generate_token
-    secret = Rails.application.secrets.secret_key_base
+    secret = Rails.application.secret_key_base
     JWT.encode({ user_id: id }, secret, 'HS256')
   end
 end

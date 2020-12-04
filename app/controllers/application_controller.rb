@@ -96,15 +96,6 @@ class ApplicationController < ActionController::API
 
   def require_auth!
     unless authenticated?
-      auth_header = request.headers['Authorization'].presence || ''
-      auth_token = auth_header.gsub(/\Abearer +/i, '').strip
-      # claims_validated = JWT.decode(
-      #   auth_token,
-      #   Rails.application.secrets.secret_key_base,
-      #   true,
-      #   { algorithm: 'HS256' }
-      # )
-      # Rails.logger.info("#require_auth! failed.\nAuth token: #{auth_token}\nClaims validated: #{claims_validated}")
       render status: :unauthorized, json: json_error(:auth_token_invalid)
     end
   end

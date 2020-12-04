@@ -13,7 +13,7 @@ class JwtToken
         **data_hash
       }
 
-      secret = Rails.application.secrets.secret_key_base
+      secret = Rails.application.secret_key_base
       JWT.encode(claims, secret, claims[:alg])
     end
 
@@ -21,8 +21,7 @@ class JwtToken
       return if token.blank?
 
       decoded = begin
-        secret = Rails.application.secrets.secret_key_base
-        Rails.logger.info("Secret key length:, #{secret && secret.length}")
+        secret = Rails.application.secret_key_base
         JWT.decode(token, secret, true, { algorithm: 'HS256' })
       rescue JWT::DecodeError => e
         Rails.logger.info("JWT error:")
