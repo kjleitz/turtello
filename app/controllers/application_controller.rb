@@ -97,7 +97,7 @@ class ApplicationController < ActionController::API
 
   def require_auth!
     unless authenticated?
-      Rails.logger.info("#require_auth! failed. Headers:\n#{request.headers.to_h.keys.map { |key| "#{key}: #{request.headers[key]}" }.join("\n")}")
+      Rails.logger.info("#require_auth! failed. Authorization header: #{request.headers['Authorization']}")
       render status: :unauthorized, json: json_error(:auth_token_invalid)
     end
   end
