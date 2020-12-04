@@ -104,7 +104,13 @@ class ApplicationController < ActionController::API
         false,
         { algorithm: 'HS256' }
       )
-      Rails.logger.info("#require_auth! failed.\nAuth token: #{auth_token}\nClaims: #{claims}")
+      claims_validated = JWT.decode(
+        auth_token,
+        Rails.application.secrets.secret_key_base,
+        true,
+        { algorithm: 'HS256' }
+      )
+      Rails.logger.info("#require_auth! failed.\nAuth token: #{auth_token}\nClaims: #{claims}\nClaims validated: #{claims_validated}")
       render status: :unauthorized, json: json_error(:auth_token_invalid)
     end
   end
