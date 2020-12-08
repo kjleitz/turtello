@@ -6,6 +6,7 @@ Rails.application.routes.draw do
 
   resources :user_buddies
   resources :messages
+  resources :message_threads, only: [:show, :index]
   resources :users do
     resources :message_threads, only: [:show, :index]
   end

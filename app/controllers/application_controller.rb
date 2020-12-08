@@ -100,6 +100,26 @@ class ApplicationController < ActionController::API
     end
   end
 
+  def filter_params
+    params[:filter] || {}
+  end
+
+  def filter_scope(scope)
+    if filter_params[:ids]
+      scope.where(ids: filter_params[:ids])
+    else
+      scope
+    end
+  end
+
+  def serializer_include
+    include_param = params[:include].presence
+    case include_param
+    when String then [include_param]
+    when Array then include_param.map(&:to_s)
+    end
+  end
+
   private
 
   def refresh_expires_at

@@ -2,13 +2,13 @@ class UsersController < ApplicationController
   before_action :require_auth!, except: [:create]
 
   def index
-    users = policy_scope User.all
-    render json: UserSerializer.new(users).as_json
+    users = policy_scope filter_scope User.all
+    render json: UserSerializer.new(users, include: serializer_include).as_json
   end
 
   def show
     user = authorize User.friendly.find(params[:id])
-    render json: UserSerializer.new(user).as_json
+    render json: UserSerializer.new(user, include: serializer_include).as_json
   end
 
   def create
@@ -16,7 +16,7 @@ class UsersController < ApplicationController
 
     if user.save
       set_current_user!(user)
-      render status: :created, json: UserSerializer.new(user).as_json
+      render status: :created, json: UserSerializer.new(user, include: serializer_include).as_json
     else
       render_validation_failure(user)
     end
@@ -30,7 +30,7 @@ class UsersController < ApplicationController
     end
 
     if user.update(user_update_params)
-      render json: UserSerializer.new(user).as_json
+      render json: UserSerializer.new(user, include: serializer_include).as_json
     else
       render_validation_failure(user)
     end
